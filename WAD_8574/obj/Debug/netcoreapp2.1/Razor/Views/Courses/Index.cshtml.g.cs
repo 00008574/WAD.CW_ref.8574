@@ -75,7 +75,7 @@ Write(Html.ActionLink("Update Course Credits", "UpdateCourseCredits", "Courses")
             WriteLiteral("\r\n<p>\r\n    ");
             EndContext();
             BeginContext(187, 37, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "9cdef9eb7826434cbd5391153810e579", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "d99e0ead700f4b988133e6f20df1857d", async() => {
                 BeginContext(210, 10, true);
                 WriteLiteral("Create New");
                 EndContext();
@@ -186,7 +186,7 @@ Write(Html.ActionLink("Update Course Credits", "UpdateCourseCredits", "Courses")
             WriteLiteral("\r\n    </td>\r\n    <td>\r\n        ");
             EndContext();
             BeginContext(1121, 59, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "f274e12259694d80a742dd72ca904fad", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "36464aaa14ff4139bb6294ae8def77b8", async() => {
                 BeginContext(1172, 4, true);
                 WriteLiteral("Edit");
                 EndContext();
@@ -221,7 +221,7 @@ Write(Html.ActionLink("Update Course Credits", "UpdateCourseCredits", "Courses")
             WriteLiteral(" |\r\n        ");
             EndContext();
             BeginContext(1192, 65, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "2e391f2a05a946f6ad5e19e5626712f0", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "1553b2b23230410ea05929a2099871ae", async() => {
                 BeginContext(1246, 7, true);
                 WriteLiteral("Details");
                 EndContext();
@@ -256,7 +256,7 @@ Write(Html.ActionLink("Update Course Credits", "UpdateCourseCredits", "Courses")
             WriteLiteral(" |\r\n        ");
             EndContext();
             BeginContext(1269, 63, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "4b4edcca37b149b9bf0f33b577006a81", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "47cbafe0229b4d79856d21357113a9f0", async() => {
                 BeginContext(1322, 6, true);
                 WriteLiteral("Delete");
                 EndContext();

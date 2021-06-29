@@ -44,3 +44,8 @@ D:\zzz\WIUT\semseter 9\wad\WebApp\WAD.CW_ref.8574\WAD.CW_ref.8574\WAD_8574\obj\D
 D:\zzz\WIUT\semseter 9\wad\WebApp\WAD.CW_ref.8574\WAD.CW_ref.8574\WAD_8574\obj\Debug\netcoreapp2.1\Razor\Views\Courses\Details.cshtml.g.cs
 D:\zzz\WIUT\semseter 9\wad\WebApp\WAD.CW_ref.8574\WAD.CW_ref.8574\WAD_8574\obj\Debug\netcoreapp2.1\Razor\Views\Courses\Edit.cshtml.g.cs
 D:\zzz\WIUT\semseter 9\wad\WebApp\WAD.CW_ref.8574\WAD.CW_ref.8574\WAD_8574\obj\Debug\netcoreapp2.1\Razor\Views\Courses\Index.cshtml.g.cs
+D:\zzz\WIUT\semseter 9\wad\WebApp\WAD.CW_ref.8574\WAD.CW_ref.8574\WAD_8574\obj\Debug\netcoreapp2.1\Razor\Views\Tutors\Create.cshtml.g.cs
+D:\zzz\WIUT\semseter 9\wad\WebApp\WAD.CW_ref.8574\WAD.CW_ref.8574\WAD_8574\obj\Debug\netcoreapp2.1\Razor\Views\Tutors\Delete.cshtml.g.cs
+D:\zzz\WIUT\semseter 9\wad\WebApp\WAD.CW_ref.8574\WAD.CW_ref.8574\WAD_8574\obj\Debug\netcoreapp2.1\Razor\Views\Tutors\Details.cshtml.g.cs
+D:\zzz\WIUT\semseter 9\wad\WebApp\WAD.CW_ref.8574\WAD.CW_ref.8574\WAD_8574\obj\Debug\netcoreapp2.1\Razor\Views\Tutors\Edit.cshtml.g.cs
+D:\zzz\WIUT\semseter 9\wad\WebApp\WAD.CW_ref.8574\WAD.CW_ref.8574\WAD_8574\obj\Debug\netcoreapp2.1\Razor\Views\Tutors\Index.cshtml.g.cs
