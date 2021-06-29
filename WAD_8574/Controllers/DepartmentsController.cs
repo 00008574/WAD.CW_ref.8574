@@ -34,7 +34,9 @@ namespace WAD_8574.Controllers
                 return NotFound();
             }
 
+            string query = "SELECT * FROM Departments WHERE DepartmentID = {0}";
             var department = await _context.Departments
+                .FromSql(query, id)
                 .Include(d => d.Administrator)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.DepartmentId == id);

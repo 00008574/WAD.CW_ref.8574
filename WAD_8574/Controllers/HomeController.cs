@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WAD_8574.Data;
 using WAD_8574.Models;
+using WAD_8574.Models.SchoolViewModels;
 
 namespace WAD_8574.Controllers
 {
@@ -18,15 +21,48 @@ namespace WAD_8574.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<ActionResult> About()
         {
-            return View();
+            List<EnrollmentDateGroup> groups = new List<EnrollmentDateGroup>();
+            var conn = _context.Database.GetDbConnection();
+
+            try
+            {
+                await conn.OpenAsync();
+                using (var command = conn.CreateCommand())
+                {
+                    string query = "SELECT EnrollmentDate, COUNT(*) AS StudentCount "
+                        + "FROM Student "
+                        + "GROUP BY EnrollmentDate";
+                    command.CommandText = query;
+                    DbDataReader reader = await command.ExecuteReaderAsync();
+
+                    if (reader.HasRows)
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var row = new EnrollmentDateGroup
+                            {
+                                EnrollmentDate = reader.GetDateTime(0),
+                                StudentCount = reader.GetInt32(1)
+                            };
+                            groups.Add(row);
+                        }
+                    }
+                    reader.Dispose();
+
+                }
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            return View(groups);
         }
 
-        public IActionResult About()
+        public IActionResult Index()
         {
-            ViewData["Message"] = "Your application description page.";
-
             return View();
         }
 
