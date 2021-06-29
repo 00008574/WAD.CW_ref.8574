@@ -81,6 +81,9 @@ namespace WAD_8574.Controllers
         // GET: Tutors/Create
         public IActionResult Create()
         {
+            var tutor = new Tutor();
+            tutor.CourseAssignments = new List<CourseAssignment>();
+            PopulateAssignedCourseData(tutor);
             return View();
         }
 
@@ -89,14 +92,29 @@ namespace WAD_8574.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,LastName,FirstMidName,HireDate")] Tutor tutor)
+        public async Task<IActionResult> Create([Bind("FirstMidName,HireDate,LastName,OfficeAssignment")] Tutor tutor, string[] selectedCourses)
         {
+            if (selectedCourses != null)
+            {
+                tutor.CourseAssignments = new List<CourseAssignment>();
+                foreach (var course in selectedCourses)
+                {
+                    var courseToAdd = new CourseAssignment
+                    {
+                        TutorId = tutor.ID,
+                        CourseId = int.Parse(course)
+                    };
+                    tutor.CourseAssignments.Add(courseToAdd);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(tutor);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            PopulateAssignedCourseData(tutor);
             return View(tutor);
         }
 
@@ -108,12 +126,38 @@ namespace WAD_8574.Controllers
                 return NotFound();
             }
 
-            var tutor = await _context.Tutors.FindAsync(id);
+            var tutor = await _context.Tutors
+                .Include(i => i.OfficeAssignment)
+                .Include(i => i.CourseAssignments)
+                    .ThenInclude(i => i.Course)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.ID == id);
+
             if (tutor == null)
             {
                 return NotFound();
             }
+
+            PopulateAssignedCourseData(tutor);
             return View(tutor);
+        }
+
+        private void PopulateAssignedCourseData(Tutor tutor)
+        {
+            var allCourses = _context.Courses;
+            var tutorCourses = new HashSet<int>(tutor.CourseAssignments.Select(c => c.CourseId));
+            var viewModel = new List<AssignedCourseData>();
+
+            foreach (var course in allCourses)
+            {
+                viewModel.Add(new AssignedCourseData
+                {
+                    CourseId = course.CourseId,
+                    Title = course.Title,
+                    Assigned = tutorCourses.Contains(course.CourseId)
+                });
+            }
+            ViewData["Courses"] = viewModel;
         }
 
         // POST: Tutors/Edit/5
@@ -121,34 +165,78 @@ namespace WAD_8574.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,LastName,FirstMidName,HireDate")] Tutor tutor)
+        public async Task<IActionResult> Edit(int? id, string[] selectedCourses)
         {
-            if (id != tutor.ID)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var tutorToUpdate = await _context.Tutors
+                    .Include(i => i.OfficeAssignment)
+                    .Include(i => i.CourseAssignments)
+                        .ThenInclude(i => i.Course)
+                    .FirstOrDefaultAsync(s => s.ID == id);
+
+            if (await TryUpdateModelAsync<Tutor>(
+                tutorToUpdate,
+                "",
+                i => i.FirstMidName, i => i.LastName, i => i.HireDate, i => i.OfficeAssignment))
             {
+                if (String.IsNullOrWhiteSpace(tutorToUpdate.OfficeAssignment?.Location))
+                {
+                    tutorToUpdate.OfficeAssignment = null;
+                }
+                UpdateTutorCourses(selectedCourses, tutorToUpdate);
                 try
                 {
-                    _context.Update(tutor);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateException)
                 {
-                    if (!TutorExists(tutor.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", "Unable to save changes. Please restart!");
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(tutor);
+
+            UpdateTutorCourses(selectedCourses, tutorToUpdate);
+            PopulateAssignedCourseData(tutorToUpdate);
+            return View(tutorToUpdate);
+        }
+
+        private void UpdateTutorCourses(string[] selectedCourses, Tutor tutorToUpdate)
+        {
+            if (selectedCourses == null)
+            {
+                tutorToUpdate.CourseAssignments = new List<CourseAssignment>();
+                return;
+            }
+
+            var selectedCoursesNotNull = new HashSet<string>(selectedCourses);
+            var tutorCourses = new HashSet<int>
+                    (tutorToUpdate.CourseAssignments.Select(c => c.Course.CourseId));
+            foreach (var course in _context.Courses)
+            {
+                if (selectedCoursesNotNull.Contains(course.CourseId.ToString()))
+                {
+                    if (!tutorCourses.Contains(course.CourseId))
+                    {
+                        tutorToUpdate.CourseAssignments.Add(new CourseAssignment
+                        {
+                            TutorId = tutorToUpdate.ID,
+                            CourseId = course.CourseId
+                        });
+                    }
+                }
+                else
+                {
+                    if (tutorCourses.Contains(course.CourseId))
+                    {
+                        CourseAssignment courseToRemove = tutorToUpdate.CourseAssignments.FirstOrDefault(i => i.CourseId == course.CourseId);
+                        _context.Remove(courseToRemove);
+                    }
+                }
+            }
         }
 
         // GET: Tutors/Delete/5
@@ -174,9 +262,19 @@ namespace WAD_8574.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var tutor = await _context.Tutors.FindAsync(id);
+            Tutor tutor = await _context.Tutors
+                        .Include(i => i.CourseAssignments)
+                        .SingleAsync(i => i.ID == id);
+
+            var departments = await _context.Departments
+                    .Where(d => d.TutorId == id)
+                    .ToListAsync();
+
+            departments.ForEach(d => d.TutorId = null);
+
             _context.Tutors.Remove(tutor);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
